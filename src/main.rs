@@ -185,6 +185,25 @@ fn tokenize(source: &str) -> Option<Vec<String>> {
     Some(tokens)
 }
 
+fn text_escape(text: &str) -> String {
+    let mut result = String::new();
+    let mut is_escape = false;
+    for c in text.chars() {
+        if is_escape {
+            result.push(c);
+            is_escape = false;
+        } else {
+            match c {
+                '\\' => {
+                    is_escape = true;
+                }
+                _ => result.push(c),
+            }
+        }
+    }
+    result
+}
+
 #[derive(Clone, Debug)]
 enum Value {
     Text(Text),
@@ -196,7 +215,7 @@ impl Value {
     fn parse(source: &str) -> Option<Value> {
         if let Some(text) = source.strip_prefix("\"").and_then(|x| x.strip_suffix("\"")) {
             Some(Value::Text(Text {
-                content: text.to_string(),
+                content: text_escape(text),
                 font_size: None,
                 tag: HTMLTag::Paragraph,
             }))
