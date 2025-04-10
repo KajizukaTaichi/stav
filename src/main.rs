@@ -95,7 +95,20 @@ fn generate(stack: Stack) -> Option<String> {
         };
         output.push(html);
     }
-    Some(output.join("\n"))
+    Some(format!(
+        r#"
+        <html>
+            <head>
+                <meta charset="UTF-8">
+                <title></title>
+            </head>
+            <body>
+                {}
+            </body>
+        </html>
+        "#,
+        output.join("\n")
+    ))
 }
 
 fn tokenize(source: &str) -> Option<Vec<String>> {
