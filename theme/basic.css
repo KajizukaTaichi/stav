@@ -36,5 +36,6 @@ a {
 }
 
 a:hover {
-    text-decoration: wavy;
+    color: blueviolet;
+    text-decoration: underline;
 }
