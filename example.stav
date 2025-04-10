@@ -1,10 +1,12 @@
 "basic" theme "Hello" title
+
 "Welcome to StaV!" 1 heading
-"This is an stack-based composition system"
-"Stack is great" block-quote
+    "This is an stack-based composition system"
+    "Stack is great" block-quote
 "Features" 2 heading
-"Stack-based" list
-"Hahaha" list
+    "Stack-based" list
+    "Hahaha" list
 "Your eyes is really good" 5 font-size
+
 "The repository is here" https://github.com/KajizukaTaichi/stav link
 https://ubazame.pages.dev/splash.jpg image
