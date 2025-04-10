@@ -42,18 +42,25 @@ fn stav(source: &str) -> Option<String> {
         .iter()
         .map(|x| Node::parse(x.trim()))
         .collect::<Option<Vec<Node>>>()?;
-    let mut stack: Stack = Vec::new();
+    let mut stack: Stack = Stack {
+        data: Vec::new(),
+        title: None,
+        style: String::new(),
+    };
     for token in tokens {
         token.eval(&mut stack)?;
     }
     generate(stack)
 }
 
-type Stack = Vec<Value>;
-
+struct Stack {
+    data: Vec<Value>,
+    title: Option<String>,
+    style: String,
+}
 fn generate(stack: Stack) -> Option<String> {
     let mut output = Vec::new();
-    for value in stack {
+    for value in stack.data {
         let Value::Text(text) = value else {
             return None;
         };
@@ -203,7 +210,7 @@ enum Node {
 impl Node {
     fn eval(&self, stack: &mut Stack) -> Option<()> {
         match self {
-            Node::Literal(value) => stack.push(value.clone()),
+            Node::Literal(value) => stack.data.push(value.clone()),
             Node::Command(command) => command.eval(stack)?,
         }
         Some(())
@@ -234,50 +241,50 @@ impl Command {
     fn eval(&self, stack: &mut Stack) -> Option<()> {
         match self {
             Command::Heading => {
-                let Value::Integer(level) = stack.pop()? else {
+                let Value::Integer(level) = stack.data.pop()? else {
                     return None;
                 };
-                let Value::Text(mut text) = stack.pop()? else {
+                let Value::Text(mut text) = stack.data.pop()? else {
                     return None;
                 };
                 text.tag = HTMLTag::Heading(level);
-                stack.push(Value::Text(text));
+                stack.data.push(Value::Text(text));
             }
             Command::FontSize => {
-                let Value::Integer(size) = stack.pop()? else {
+                let Value::Integer(size) = stack.data.pop()? else {
                     return None;
                 };
-                let Value::Text(mut text) = stack.pop()? else {
+                let Value::Text(mut text) = stack.data.pop()? else {
                     return None;
                 };
                 text.font_size = Some(size);
-                stack.push(Value::Text(text));
+                stack.data.push(Value::Text(text));
             }
             Command::Link => {
-                let Value::Link(url) = stack.pop()? else {
+                let Value::Link(url) = stack.data.pop()? else {
                     return None;
                 };
-                let Value::Text(mut text) = stack.pop()? else {
+                let Value::Text(mut text) = stack.data.pop()? else {
                     return None;
                 };
                 text.tag = HTMLTag::Link(url);
-                stack.push(Value::Text(text));
+                stack.data.push(Value::Text(text));
             }
             Command::BlockQuote => {
-                let Value::Text(mut text) = stack.pop()? else {
+                let Value::Text(mut text) = stack.data.pop()? else {
                     return None;
                 };
                 text.tag = HTMLTag::BlockQuote;
-                stack.push(Value::Text(text));
+                stack.data.push(Value::Text(text));
             }
             Command::Swap => {
-                let value1 = stack.pop()?;
-                let value2 = stack.pop()?;
-                stack.push(value1);
-                stack.push(value2);
+                let value1 = stack.data.pop()?;
+                let value2 = stack.data.pop()?;
+                stack.data.push(value1);
+                stack.data.push(value2);
             }
             Command::Pop => {
-                stack.pop()?;
+                stack.data.pop()?;
             }
         }
         Some(())
