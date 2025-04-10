@@ -4,7 +4,7 @@
     "This is an stack-based composition system"
     "Stack is great" block-quote
 "Features" 2 heading
-    "Stack-based" list
+    "Stack-based language" list
     "Doesn\'t output PDF" list
 "Your eyes is really good" 5 font-size
 
