@@ -117,6 +117,8 @@ fn generate(stack: Stack) -> Option<String> {
         };
         if is_list {
             output.push(format!("<ul>{}</ul>", list.join("\n")));
+            is_list = false;
+            list.clear();
         }
         output.push(html);
     }
