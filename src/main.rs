@@ -85,6 +85,13 @@ fn generate(stack: Stack) -> Option<String> {
                 set_font_size!(font_size),
                 text.content,
             ),
+            (HTMLTag::BlockQuote, font_size) => {
+                format!(
+                    "<blockquote{}>{}</blockquote>",
+                    set_font_size!(font_size),
+                    text.content
+                )
+            }
         };
         output.push(html);
     }
@@ -171,6 +178,7 @@ enum HTMLTag {
     Heading(i32),
     Paragraph,
     Link(String),
+    BlockQuote,
 }
 
 #[derive(Clone, Debug)]
@@ -204,6 +212,7 @@ enum Command {
     Heading,
     FontSize,
     Link,
+    BlockQuote,
     Swap,
     Pop,
 }
@@ -241,6 +250,13 @@ impl Command {
                 text.tag = HTMLTag::Link(url);
                 stack.push(Value::Text(text));
             }
+            Command::BlockQuote => {
+                let Value::Text(mut text) = stack.pop()? else {
+                    return None;
+                };
+                text.tag = HTMLTag::BlockQuote;
+                stack.push(Value::Text(text));
+            }
             Command::Swap => {
                 let value1 = stack.pop()?;
                 let value2 = stack.pop()?;
@@ -259,6 +275,7 @@ impl Command {
             "heading" => Some(Command::Heading),
             "font-size" => Some(Command::FontSize),
             "link" => Some(Command::Link),
+            "block-quote" => Some(Command::BlockQuote),
             "swap" => Some(Command::Swap),
             "pop" => Some(Command::Pop),
             _ => None,
