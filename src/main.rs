@@ -1,5 +1,6 @@
 use clap::Parser;
 use std::{
+    collections::HashMap,
     fs::{File, read_to_string},
     io::Write,
     path::Path,
@@ -45,6 +46,7 @@ fn stav(source: &str) -> Option<String> {
         .collect::<Option<Vec<Node>>>()?;
     let mut stack: Stack = Stack {
         data: Vec::new(),
+        scope: HashMap::new(),
         title: None,
         theme: None,
     };
@@ -56,6 +58,7 @@ fn stav(source: &str) -> Option<String> {
 
 struct Stack {
     data: Vec<Value>,
+    scope: HashMap<String, Value>,
     title: Option<String>,
     theme: Option<String>,
 }
@@ -209,6 +212,7 @@ enum Value {
     Text(Text),
     Integer(i32),
     Link(String),
+    Symbol(String),
 }
 
 impl Value {
@@ -224,7 +228,7 @@ impl Value {
         } else if source.starts_with("https://") {
             Some(Value::Link(source.to_string()))
         } else {
-            None
+            Some(Value::Symbol(source.to_string()))
         }
     }
 }
@@ -282,6 +286,8 @@ enum Command {
     List,
     Title,
     Theme,
+    Load,
+    Store,
     Swap,
     Pop,
 }
@@ -356,6 +362,19 @@ impl Command {
                 };
                 stack.theme = Some(text.content);
             }
+            Command::Load => {
+                let Value::Symbol(name) = stack.data.pop()? else {
+                    return None;
+                };
+                stack.data.push(stack.scope.get(&name)?.clone())
+            }
+            Command::Store => {
+                let Value::Symbol(name) = stack.data.pop()? else {
+                    return None;
+                };
+                let value = stack.data.pop()?;
+                stack.scope.insert(name, value);
+            }
             Command::Swap => {
                 let value1 = stack.data.pop()?;
                 let value2 = stack.data.pop()?;
@@ -379,6 +398,7 @@ impl Command {
             "image" => Some(Command::Image),
             "title" => Some(Command::Title),
             "theme" => Some(Command::Theme),
+            "load" => Some(Command::Load),
             "swap" => Some(Command::Swap),
             "pop" => Some(Command::Pop),
             _ => None,
