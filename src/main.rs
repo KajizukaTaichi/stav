@@ -162,7 +162,7 @@ fn tokenize(source: &str) -> Option<Vec<String>> {
             is_escape = false;
         } else {
             match c {
-                '"' | '\'' | '`' => {
+                '"' => {
                     in_quote = !in_quote;
                     current_token.push(c);
                 }
@@ -266,10 +266,10 @@ impl Node {
     }
 
     fn parse(source: &str) -> Option<Node> {
-        if let Some(value) = Value::parse(source) {
-            Some(Node::Literal(value))
-        } else if let Some(value) = Command::parse(source) {
+        if let Some(value) = Command::parse(source) {
             Some(Node::Command(value))
+        } else if let Some(value) = Value::parse(source) {
+            Some(Node::Literal(value))
         } else {
             None
         }
