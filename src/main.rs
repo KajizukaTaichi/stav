@@ -215,7 +215,7 @@ impl Value {
     fn parse(source: &str) -> Option<Value> {
         if let Some(text) = source.strip_prefix("\"").and_then(|x| x.strip_suffix("\"")) {
             Some(Value::Text(Text {
-                content: text_escape(text).replace("\n", "<br>"),
+                content: text_escape(text).trim().replace("\n", "<br>"),
                 font_size: None,
                 tag: HTMLTag::Paragraph,
             }))
