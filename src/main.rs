@@ -290,6 +290,7 @@ enum Command {
     Theme,
     Load,
     Store,
+    Dup,
     Swap,
     Pop,
 }
@@ -377,6 +378,11 @@ impl Command {
                 let value = stack.data.pop()?;
                 stack.scope.insert(name, value);
             }
+            Command::Dup => {
+                let value = stack.data.pop()?;
+                stack.data.push(value.clone());
+                stack.data.push(value);
+            }
             Command::Swap => {
                 let value1 = stack.data.pop()?;
                 let value2 = stack.data.pop()?;
@@ -402,6 +408,7 @@ impl Command {
             "theme" => Some(Command::Theme),
             "load" => Some(Command::Load),
             "store" => Some(Command::Store),
+            "dup" => Some(Command::Dup),
             "swap" => Some(Command::Swap),
             "pop" => Some(Command::Pop),
             _ => None,
