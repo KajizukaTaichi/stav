@@ -1,2 +1,4 @@
 # Stav
-Stack-based composition system
+スタック指向型組版システム（Stavの読み方：スタフ）
+
+出力先はHTMLです。PDFでは無いのはAdobeの独占が嫌いという思想から
