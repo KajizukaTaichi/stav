@@ -110,8 +110,8 @@ fn generate(stack: Stack) -> Option<String> {
         <html>
             <head>
                 <meta charset="UTF-8">
-               <title>{}</title>
-               <link rel="stylesheet" href="theme/{}.css">
+                <title>{}</title>
+                <link rel="stylesheet" href="theme/{}.css">
             </head>
             <body>
                 {}
