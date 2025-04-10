@@ -58,8 +58,11 @@ struct Stack {
     title: Option<String>,
     theme: Option<String>,
 }
+
 fn generate(stack: Stack) -> Option<String> {
     let mut output = Vec::new();
+    let mut list = Vec::new();
+    let mut is_list = false;
     for value in stack.data {
         let Value::Text(text) = value else {
             return None;
@@ -102,7 +105,19 @@ fn generate(stack: Stack) -> Option<String> {
             (HTMLTag::Image(url), _) => {
                 format!("<img src=\"{}\" alt=\"{}\">", url, text.content)
             }
+            (HTMLTag::List, font_size) => {
+                list.push(format!(
+                    "<li {}>{}</li>",
+                    set_font_size!(font_size),
+                    text.content
+                ));
+                is_list = true;
+                continue;
+            }
         };
+        if is_list {
+            output.push(format!("<ul>{}</ul>", list.join("\n")));
+        }
         output.push(html);
     }
     Some(format!(
@@ -206,6 +221,7 @@ enum HTMLTag {
     Link(String),
     Image(String),
     BlockQuote,
+    List,
 }
 
 #[derive(Clone, Debug)]
@@ -241,6 +257,7 @@ enum Command {
     Link,
     BlockQuote,
     Image,
+    List,
     Title,
     Theme,
     Swap,
@@ -298,6 +315,13 @@ impl Command {
                 };
                 stack.data.push(Value::Text(text));
             }
+            Command::List => {
+                let Value::Text(mut text) = stack.data.pop()? else {
+                    return None;
+                };
+                text.tag = HTMLTag::List;
+                stack.data.push(Value::Text(text));
+            }
             Command::Title => {
                 let Value::Text(text) = stack.data.pop()? else {
                     return None;
@@ -329,6 +353,7 @@ impl Command {
             "font-size" => Some(Command::FontSize),
             "link" => Some(Command::Link),
             "block-quote" => Some(Command::BlockQuote),
+            "list" => Some(Command::List),
             "image" => Some(Command::Image),
             "title" => Some(Command::Title),
             "theme" => Some(Command::Theme),
