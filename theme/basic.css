@@ -1,18 +1,22 @@
 body {
-    font-family: "MS Mincho", "明朝", "serif"; /* 明朝体 */
-    line-height: 1.8; /* 行間を広く */
-    margin: 50px; /* ページ余白 */
-    background-color: #fefefe; /* 背景色を白に */
-    color: #333333; /* 文字色 */
-    text-align: justify; /* 両端揃え */
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.6;
+    font-size: 16px;
+    color: #333;
+    background-color: #f4f4f4;
+    margin: 40px;
 }
 
 h1,
 h2,
 h3 {
-    font-family: "MS Pゴシック", "ゴシック", sans-serif; /* ゴシック体 */
-    font-weight: bold;
+    font-family: "Georgia", serif;
+    color: #333;
     margin-bottom: 15px;
+}
+
+h1 {
+    border-bottom: 1px #0066cc solid;
 }
 
 p {
