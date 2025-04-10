@@ -216,6 +216,35 @@ enum Value {
 }
 
 impl Value {
+    fn eval(&self, stack: &mut Stack) -> Option<()> {
+        match self {
+            Value::Text(text) => stack.data.push(Value::Text(Text {
+                content: tokenize(&text.content)?
+                    .iter()
+                    .map(|token| {
+                        if let Some(name) = token.strip_prefix("@") {
+                            stack.scope.get(name).map(|x| x.to_string())
+                        } else {
+                            Some(token.clone())
+                        }
+                    })
+                    .collect::<Option<Vec<String>>>()?
+                    .join(" "),
+                ..text.clone()
+            })),
+            _ => stack.data.push(self.clone()),
+        }
+        Some(())
+    }
+
+    fn to_string(&self) -> String {
+        match self {
+            Value::Integer(int) => int.to_string(),
+            Value::Text(text) => text.content.clone(),
+            Value::Link(text) | Value::Symbol(text) => text.clone(),
+        }
+    }
+
     fn parse(source: &str) -> Option<Value> {
         if let Some(text) = source.strip_prefix("\"").and_then(|x| x.strip_suffix("\"")) {
             Some(Value::Text(Text {
@@ -261,7 +290,7 @@ enum Node {
 impl Node {
     fn eval(&self, stack: &mut Stack) -> Option<()> {
         match self {
-            Node::Literal(value) => stack.data.push(value.clone()),
+            Node::Literal(value) => value.eval(stack)?,
             Node::Command(command) => command.eval(stack)?,
         }
         Some(())
