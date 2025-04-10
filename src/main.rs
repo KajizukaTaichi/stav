@@ -227,8 +227,10 @@ impl Value {
             Some(Value::Integer(number))
         } else if source.starts_with("https://") {
             Some(Value::Link(source.to_string()))
+        } else if let Some(name) = source.strip_prefix("@") {
+            Some(Value::Symbol(name.to_string()))
         } else {
-            Some(Value::Symbol(source.to_string()))
+            None
         }
     }
 }
