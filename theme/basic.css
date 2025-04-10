@@ -1,0 +1,36 @@
+body {
+    font-family: "MS Mincho", "明朝", "serif"; /* 明朝体 */
+    line-height: 1.8; /* 行間を広く */
+    margin: 50px; /* ページ余白 */
+    background-color: #fefefe; /* 背景色を白に */
+    color: #333333; /* 文字色 */
+    text-align: justify; /* 両端揃え */
+}
+
+h1,
+h2,
+h3 {
+    font-family: "MS Pゴシック", "ゴシック", sans-serif; /* ゴシック体 */
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+p {
+    margin-bottom: 20px; /* 段落の下にスペース */
+}
+
+blockquote {
+    font-style: italic;
+    margin: 20px 0;
+    padding-left: 20px;
+    border-left: 4px solid #ccc;
+}
+
+a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: wavy;
+}
