@@ -99,6 +99,9 @@ fn generate(stack: Stack) -> Option<String> {
                     text.content
                 )
             }
+            (HTMLTag::Image(url), _) => {
+                format!("<img src=\"{}\" alt=\"{}\">", url, text.content)
+            }
         };
         output.push(html);
     }
@@ -201,6 +204,7 @@ enum HTMLTag {
     Heading(i32),
     Paragraph,
     Link(String),
+    Image(String),
     BlockQuote,
 }
 
@@ -236,6 +240,7 @@ enum Command {
     FontSize,
     Link,
     BlockQuote,
+    Image,
     Title,
     Theme,
     Swap,
@@ -282,6 +287,17 @@ impl Command {
                 text.tag = HTMLTag::BlockQuote;
                 stack.data.push(Value::Text(text));
             }
+            Command::Image => {
+                let Value::Link(url) = stack.data.pop()? else {
+                    return None;
+                };
+                let text = Text {
+                    content: String::new(),
+                    font_size: None,
+                    tag: HTMLTag::Image(url),
+                };
+                stack.data.push(Value::Text(text));
+            }
             Command::Title => {
                 let Value::Text(text) = stack.data.pop()? else {
                     return None;
@@ -313,6 +329,7 @@ impl Command {
             "font-size" => Some(Command::FontSize),
             "link" => Some(Command::Link),
             "block-quote" => Some(Command::BlockQuote),
+            "image" => Some(Command::Image),
             "title" => Some(Command::Title),
             "theme" => Some(Command::Theme),
             "swap" => Some(Command::Swap),
