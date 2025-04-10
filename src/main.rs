@@ -290,6 +290,7 @@ enum Command {
     Theme,
     Load,
     Store,
+    Concat,
     Dup,
     Swap,
     Pop,
@@ -378,6 +379,16 @@ impl Command {
                 let value = stack.data.pop()?;
                 stack.scope.insert(name, value);
             }
+            Command::Concat => {
+                let Value::Text(text2) = stack.data.pop()? else {
+                    return None;
+                };
+                let Value::Text(mut text1) = stack.data.pop()? else {
+                    return None;
+                };
+                text1.content.push_str(&text2.content);
+                stack.data.push(Value::Text(text1));
+            }
             Command::Dup => {
                 let value = stack.data.pop()?;
                 stack.data.push(value.clone());
@@ -407,6 +418,7 @@ impl Command {
             "title" => Some(Command::Title),
             "theme" => Some(Command::Theme),
             "load" => Some(Command::Load),
+            "concat" => Some(Command::Concat),
             "store" => Some(Command::Store),
             "dup" => Some(Command::Dup),
             "swap" => Some(Command::Swap),
