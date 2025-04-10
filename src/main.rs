@@ -399,6 +399,7 @@ impl Command {
             "title" => Some(Command::Title),
             "theme" => Some(Command::Theme),
             "load" => Some(Command::Load),
+            "store" => Some(Command::Store),
             "swap" => Some(Command::Swap),
             "pop" => Some(Command::Pop),
             _ => None,
