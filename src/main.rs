@@ -45,7 +45,7 @@ fn stav(source: &str) -> Option<String> {
     let mut stack: Stack = Stack {
         data: Vec::new(),
         title: None,
-        style: String::new(),
+        theme: None,
     };
     for token in tokens {
         token.eval(&mut stack)?;
@@ -56,7 +56,7 @@ fn stav(source: &str) -> Option<String> {
 struct Stack {
     data: Vec<Value>,
     title: Option<String>,
-    style: String,
+    theme: Option<String>,
 }
 fn generate(stack: Stack) -> Option<String> {
     let mut output = Vec::new();
@@ -107,14 +107,17 @@ fn generate(stack: Stack) -> Option<String> {
         <html>
             <head>
                 <meta charset="UTF-8">
-                <title></title>
+               <title>{}</title>
+               <link rel="stylesheet" href="theme/{}.css">
             </head>
             <body>
                 {}
             </body>
         </html>
         "#,
-        output.join("\n")
+        stack.title.unwrap_or("Untitled".to_owned()),
+        stack.theme.unwrap_or("none".to_owned()),
+        output.join("\n"),
     ))
 }
 
@@ -233,6 +236,8 @@ enum Command {
     FontSize,
     Link,
     BlockQuote,
+    Title,
+    Theme,
     Swap,
     Pop,
 }
@@ -277,6 +282,18 @@ impl Command {
                 text.tag = HTMLTag::BlockQuote;
                 stack.data.push(Value::Text(text));
             }
+            Command::Title => {
+                let Value::Text(text) = stack.data.pop()? else {
+                    return None;
+                };
+                stack.title = Some(text.content);
+            }
+            Command::Theme => {
+                let Value::Text(text) = stack.data.pop()? else {
+                    return None;
+                };
+                stack.theme = Some(text.content);
+            }
             Command::Swap => {
                 let value1 = stack.data.pop()?;
                 let value2 = stack.data.pop()?;
@@ -296,6 +313,8 @@ impl Command {
             "font-size" => Some(Command::FontSize),
             "link" => Some(Command::Link),
             "block-quote" => Some(Command::BlockQuote),
+            "title" => Some(Command::Title),
+            "theme" => Some(Command::Theme),
             "swap" => Some(Command::Swap),
             "pop" => Some(Command::Pop),
             _ => None,
