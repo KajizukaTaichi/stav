@@ -40,6 +40,7 @@ fn main() {
 fn stav(source: &str) -> Option<String> {
     let tokens = tokenize(source)?
         .iter()
+        .filter(|x| !x.trim().is_empty())
         .map(|x| Node::parse(x.trim()))
         .collect::<Option<Vec<Node>>>()?;
     let mut stack: Stack = Stack {
