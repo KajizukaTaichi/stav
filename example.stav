@@ -5,7 +5,7 @@
     "Stack is great" block-quote
 "Features" 2 heading
     "Stack-based" list
-    "Hahaha" list
+    "Doesn\'t output PDF" list
 "Your eyes is really good" 5 font-size
 
 "The repository is here" https://github.com/KajizukaTaichi/stav link
